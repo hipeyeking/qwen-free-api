@@ -214,13 +214,14 @@ async function createCompletionStream(
         mode: "chat",
         model: "",
         action: "next",
-        userAction: "chat",
+        userAction: "deep_search",
         requestId: util.uuid(false),
         sessionId,
         sessionType: "text_chat",
         parentMsgId,
         params: {
-          "fileUploadBatchId": util.uuid()
+          "fileUploadBatchId": util.uuid(),
+           "searchType": "depth"
         },
         contents: messagesPrepare(messages, refs, !!refConvId),
       })
@@ -405,6 +406,10 @@ function messagesPrepare(messages: any[], refs: any[] = [], isRefConv = false) {
       content,
       contentType: "text",
       role: "user",
+      ext: {
+                searchType: "depth",
+                pptGenerate: false
+            }
     },
     ...refs
   ];
@@ -459,7 +464,7 @@ async function receiveStream(stream: any): Promise<any> {
           data.id = `${result.sessionId}-${result.msgId}`;
         const text = (result.contents || []).reduce((str, part) => {
           const { contentType, role, content } = part;
-          if (contentType != "text" && contentType != "text2image") return str;
+          if (contentType != "text" && contentType != "text2image"&& contentType != "plugin") return str;
           if (role != "assistant" && !_.isString(content)) return str;
           return str + content;
         }, "");
