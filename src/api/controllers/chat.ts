@@ -466,7 +466,7 @@ async function receiveStream(stream: any): Promise<any> {
           const { contentType, role, content } = part;
           if (contentType != "text" && contentType != "text2image"&& contentType != "plugin") return str;
           if (role != "assistant" && !_.isString(content)) return str;
-          return str + content;
+          return str +"@@@@@@@"+ content;
         }, "");
         const exceptCharIndex = text.indexOf("�");
         let chunk = text.substring(
